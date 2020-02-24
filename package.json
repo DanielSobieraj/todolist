@@ -10,10 +10,11 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
+    "express": "latest",
+    "serve-static": "latest",
     "vue": "^2.6.11",
     "vuetify": "^2.2.11",
-    "serve-static": "latest",
-    "express": "latest"
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
