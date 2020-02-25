@@ -8,6 +8,10 @@
                     <ul>
                         <li :key="todo.index" v-for="todo in newTodo">
                             {{ todo.name }} {{ todo.date }}
+                            <v-btn
+                                    @click="removeTodo"
+                                    class="destroy">X
+                            </v-btn>
                         </li>
                     </ul>
                 </v-col>
@@ -19,7 +23,7 @@
                             autofocus
                             autocomplete="off"
                             placeholder="What need to be done?"
-                            v-model="todo.name"
+                            v-model="todo"
                             @keyup.enter="addTodo">
                     </v-text-field>
                     <v-btn
@@ -34,21 +38,25 @@
 
 <script>
 
+
     export default {
         name: 'App',
         data() {
             return {
                 todo: '',
-                newTodo: [{
-                    "index": Math.random(),
-                    "name": 'test',
-                    "date": new Date(),
-                }],
+                newTodo: [],
             };
         },
         methods: {
-            addTodo(todo) {
-                this.newTodo.push({"name": todo})
+            addTodo() {
+                this.newTodo.push({
+                    "index": 1,
+                    "name": this.todo,
+                });
+                this.todo = ''
+            },
+            removeTodo(todo) {
+                this.newTodo.splice(this.newTodo.indexOf(todo),1)
             }
         }
     };
