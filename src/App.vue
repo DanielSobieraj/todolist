@@ -5,6 +5,11 @@
             <v-row justify="center">
                 <v-col
                         cols="6">
+                    <ul>
+                        <li :key="todo.index" v-for="todo in newTodo">
+                            {{ todo.name }} {{ todo.date }}
+                        </li>
+                    </ul>
                 </v-col>
             </v-row>
             <v-row justify="center">
@@ -14,7 +19,7 @@
                             autofocus
                             autocomplete="off"
                             placeholder="What need to be done?"
-                            v-model="newTodo"
+                            v-model="todo.name"
                             @keyup.enter="addTodo">
                     </v-text-field>
                     <v-btn
@@ -33,12 +38,17 @@
         name: 'App',
         data() {
             return {
-                newTodo: [],
+                todo: '',
+                newTodo: [{
+                    "index": Math.random(),
+                    "name": 'test',
+                    "date": new Date(),
+                }],
             };
         },
         methods: {
-            addTodo() {
-                this.newTodo.push({value: ''});
+            addTodo(todo) {
+                this.newTodo.push({"name": todo})
             }
         }
     };
