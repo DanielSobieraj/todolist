@@ -7,7 +7,7 @@
                         cols="6">
                     <ul>
                         <li :key="todo.index" v-for="todo in newTodo">
-                            {{ todo.name }} {{ todo.date }}
+                            {{ todo.names }} Index: {{ todo.index }}
                             <v-btn
                                     @click="removeTodo"
                                     class="destroy">X
@@ -37,12 +37,26 @@
 </template>
 
 <script>
-
+    const STORAGE_KEY = "Vue-todo";
+    let todoStorage = {
+        fetch() {
+            let todos = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            todos.forEach(function (todo, index) {
+                todo.id = index;
+            });
+            todoStorage.uid = todos.length;
+            return todos
+        },
+        save(todos) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+        }
+    };
 
     export default {
         name: 'App',
         data() {
             return {
+                todos: todoStorage.fetch(),
                 todo: '',
                 newTodo: [],
             };
@@ -50,14 +64,17 @@
         methods: {
             addTodo() {
                 this.newTodo.push({
-                    "index": 1,
-                    "name": this.todo,
+                    "names": this.todo,
                 });
-                this.todo = ''
+                localStorage.setItem("names", JSON.stringify(this.newTodo));
+                this.todo = '';
             },
             removeTodo(todo) {
-                this.newTodo.splice(this.newTodo.indexOf(todo),1)
+                this.newTodo.splice(this.newTodo.indexOf(todo), 1)
             }
+        },
+        created() {
+            localStorage.getItem("names")
         }
     };
 </script>
