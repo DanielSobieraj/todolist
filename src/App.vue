@@ -4,32 +4,73 @@
                 fill-height>
             <v-row justify="center">
                 <v-col
-                        cols="6">
-                    <ul>
-                        <li :key="todo.index" v-for="todo in newTodo">
-                            {{ todo.names }} Index: {{ todo.index }}
-                            <v-btn
-                                    @click="removeTodo"
-                                    class="destroy">X
-                            </v-btn>
-                        </li>
-                    </ul>
+                        cols="10"
+                        md="6">
+                    <v-text-field
+                            @keyup.enter="addTodo"
+                            autocomplete="off"
+                            autofocus
+                            clearable
+                            counter
+                            outlined
+                            placeholder="What need to be done?"
+                            v-model="newTodo">
+                    </v-text-field>
                 </v-col>
             </v-row>
             <v-row justify="center">
                 <v-col
-                        cols="6">
-                    <v-text-field
-                            autofocus
-                            autocomplete="off"
-                            placeholder="What need to be done?"
-                            v-model="todo"
-                            @keyup.enter="addTodo">
-                    </v-text-field>
-                    <v-btn
-                            @click="addTodo">
-                        Add
-                    </v-btn>
+                        cols="10"
+                        md="6"
+                        style="border: 1px solid grey">
+                    <div :key="todo.id"
+                         class="d-flex justify-space-between align-center"
+                         v-for="(todo, index) in todos">
+                        <div class="d-flex align-center">
+                            <v-checkbox color="success" v-model="todo.completed"></v-checkbox>
+                            <v-list>
+                                <p
+                                        :class="{ completed : todo.completed }"
+                                        @dblclick="editTodo(todo)"
+                                        class="mb-0"
+                                        v-if="!todo.editing">
+                                    {{ todo.title }}
+                                </p>
+                                <v-text-field
+                                        @blur="doneEdit(todo)"
+                                        @keyup.enter="doneEdit(todo)"
+                                        @keyup.esc="cancelEdit(todo)"
+                                        autofocus
+                                        v-else
+                                        v-model="todo.title"
+                                >
+
+                                </v-text-field>
+                            </v-list>
+                        </div>
+                        <div class="">
+                            <v-btn
+                                    @click="removeTodo(index)"
+                                    class="destroy"
+                                    color="red"
+                                    dark
+                                    rounded
+                                    x-small> X
+                            </v-btn>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex align-center justify-space-between">
+                        <div class="d-flex align-center">
+                            <v-checkbox
+                                    :inputValue="!anyRemaining"
+                                    @change="checkAllTodos"
+                                    color="success"
+                            />
+                            Check All
+                        </div>
+                        <div>{{ remaining }} items left</div>
+                    </div>
                 </v-col>
             </v-row>
         </v-container>
@@ -37,44 +78,80 @@
 </template>
 
 <script>
-    const STORAGE_KEY = "Vue-todo";
-    let todoStorage = {
-        fetch() {
-            let todos = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            todos.forEach(function (todo, index) {
-                todo.id = index;
-            });
-            todoStorage.uid = todos.length;
-            return todos
-        },
-        save(todos) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-        }
-    };
-
     export default {
         name: 'App',
         data() {
             return {
-                todos: todoStorage.fetch(),
-                todo: '',
-                newTodo: [],
+                newTodo: '',
+                idForTodo: 3,
+                beforeEditCache: '',
+                todos: [
+                    {
+                        'id': 1,
+                        'title': 'Finish Vue app',
+                        'completed': false,
+                        'editing': false,
+                    },
+                    {
+                        'id': 2,
+                        'title': 'Learn Vue',
+                        'completed': false,
+                        'editing': false
+                    }
+                ]
             };
         },
         methods: {
             addTodo() {
-                this.newTodo.push({
-                    "names": this.todo,
+                if (this.newTodo.trim() == 0) {
+                    return
+                }
+
+                this.todos.push({
+                    id: this.idForTodo,
+                    title: this.newTodo,
+                    completed: false
                 });
-                localStorage.setItem("names", JSON.stringify(this.newTodo));
-                this.todo = '';
+
+                this.newTodo = '';
+                this.idForTodo++
             },
-            removeTodo(todo) {
-                this.newTodo.splice(this.newTodo.indexOf(todo), 1)
+            removeTodo(index) {
+                this.todos.splice((index), 1)
+            },
+            editTodo(todo) {
+                this.beforeEditCache = todo.title;
+                todo.editing = true;
+            },
+            doneEdit(todo) {
+                if (todo.title.trim() == '') {
+                    todo.title = this.beforeEditCache;
+                }
+                todo.editing = false
+            },
+            cancelEdit(todo) {
+                todo.title = this.beforeEditCache;
+                todo.editing = false;
+            },
+            checkAllTodos() {
+                this.todos.forEach((todo) => todo.completed = event.target.inputValue)
             }
         },
-        created() {
-            localStorage.getItem("names")
+        computed: {
+            remaining() {
+                return this.todos.filter(todo => !todo.completed).length
+            },
+            anyRemaining() {
+                return this.remaining != 0
+
+            }
         }
     };
 </script>
+
+<style lang="css" scoped>
+    .completed {
+        text-decoration: line-through;
+        color: lightgray;
+    }
+</style>
