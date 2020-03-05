@@ -71,14 +71,16 @@
                         </div>
                         <div>{{ remaining }} items left</div>
                     </div>
-                    <div class="d-flex justify-space-around align-center">
+                    <div>
                         <v-btn
                                 @click="filter = 'all'"
                                 small>All
                         </v-btn>
                         <v-btn
                                 @click="filter = 'active'"
-                                small>Active
+                                class="mx-5"
+                                small
+                        >Active
                         </v-btn>
                         <v-btn
                                 @click="filter = 'completed'"
@@ -88,6 +90,7 @@
                             <v-btn
                                     @click="clearCompleted"
                                     small
+                                    class="mx-5"
                                     v-if="showClearCompletedButton">Clear Completed
                             </v-btn>
                         </v-fade-transition>
