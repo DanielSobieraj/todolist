@@ -1,5 +1,5 @@
 # Moja dotolist
-https://daniel-todolist.herokuapp.com/
+https://dsvuetodo.herokuapp.com/
 
 ## Project setup
 ```
